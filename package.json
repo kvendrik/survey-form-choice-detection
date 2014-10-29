@@ -1,7 +1,8 @@
 {
-  "name": "tool",
+  "name": "survey-form-choice-detection",
   "version": "1.0.0",
-  "description": "",
+  "description": "A small script to quickly extract the choices people made from survey forms",
+  "repository" : { "type" : "git", "url" : "https://github.com/kvendrik/survey-form-choice-detection" },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
