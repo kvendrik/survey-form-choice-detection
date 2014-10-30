@@ -60,12 +60,13 @@ lineHeights  = {
 	2: 97
 },
 columnWidths = {
-	1: 135,
+	1: 134,
 	2: 90,
 	3: 140
 },
 headerHeight = 488,
-sideWidth = 1122;
+sideWidth = 1122,
+results = {};
 
 //loop forms
 files.forEach(function(filename){
@@ -86,7 +87,7 @@ files.forEach(function(filename){
 
 			var colWidth = columnWidths[currCol];
 
-			im.convert(['../'+filename, '-crop', colWidth+'x'+lineHeights[details.lines]+'+'+(sideWidth+currOffsetX)+'+'+(headerHeight+currOffsetY), 'output/~temp/'+idx+'-'+currCol+'.jpg'],
+			im.convert(['../'+filename, '-crop', colWidth+'x'+lineHeights[details.lines]+'+'+(sideWidth+currOffsetX)+'+'+(headerHeight+currOffsetY), '~temp/'+idx+'-'+currCol+'.jpg'],
 			function(err, stdout){
 				if(err){
 					console.error(err);
@@ -107,5 +108,30 @@ files.forEach(function(filename){
 	}
 
 	console.log('---> Done cropping '+filename);
+
+	//start analyzing files
+	console.log('---> Analyzing...');
+
+	//loop questions
+	for(var currQ = 1; currQ <= 16; currQ++){
+
+		//if no results, set results array
+		//the three 0 indicate the columns. when a col is filled in the number will be increased
+		if(results[currQ] === undefined) results[currQ] = [0,0,0];
+
+		//loop columns
+		for(var currC = 1; currC <= 3; currC++){
+
+			var image = fs.readFileSync('~temp/'+currQ+'-'+currC+'.jpg');
+
+			//increase col if filled in
+			results[currQ][currC-1]++;
+
+			console.log('Analyzed question '+currQ+' column '+currC);
+
+		}
+	}
+
+	fs.writeFileSync('../results.json', JSON.stringify(results));
 
 });
