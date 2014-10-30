@@ -58,7 +58,14 @@ var questionDetails = {
 lineHeights  = {
 	1: 63,
 	2: 97
-};
+},
+columnWidths = {
+	1: 135,
+	2: 90,
+	3: 140
+},
+headerHeight = 488,
+sideWidth = 1122;
 
 //loop forms
 files.forEach(function(filename){
@@ -71,21 +78,34 @@ files.forEach(function(filename){
 	for(var idx in questionDetails){
 
 		var details = questionDetails[idx],
-			headerHeight = 488;
+			currOffsetX = 0;
 
 		//create files from rows
 		//src, -action, WxH+X+Y, dest
-		im.convert(['../'+filename, '-crop', '369x'+lineHeights[details.lines]+'+1122+'+(headerHeight+currOffsetY), 'output/~temp/'+filename+'-'+idx+'.jpg'],
-		function(err, stdout){
-			if(err){
-				console.error(err);
-				return;
-			}
-		});
+		for(var currCol = 1; currCol <= 3; currCol++){
 
+			var colWidth = columnWidths[currCol];
+
+			im.convert(['../'+filename, '-crop', colWidth+'x'+lineHeights[details.lines]+'+'+(sideWidth+currOffsetX)+'+'+(headerHeight+currOffsetY), 'output/~temp/'+idx+'-'+currCol+'.jpg'],
+			function(err, stdout){
+				if(err){
+					console.error(err);
+					return;
+				}
+			});
+
+			//update offsetX with column with + 2px for border
+			currOffsetX += colWidth+2;
+
+			console.log('Cropped question '+idx+' column '+currCol);
+
+		}
+
+		//update current offset with row height + 2px for border
 		currOffsetY += lineHeights[details.lines]+2;
-		console.log('Cropped '+filename+' question '+idx);
 
 	}
+
+	console.log('---> Done cropping '+filename);
 
 });
